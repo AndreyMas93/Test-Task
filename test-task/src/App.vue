@@ -17,49 +17,51 @@ export default defineComponent({
   name: 'MyTable',
   setup() {
     const store = useStore();
-
+    // функция добавления новой строки в таблицу
     const addRow = () => {
       store.addRow();
     };
-
+    // функция удаления строки и данных
     const removeRow = (index: number) => {
       store.removeRow(index);
     };
-
+    // проверка валидности полей логин/пароль
     const validateInputs = () => {
       let allValid = true;
 
       store.rows.forEach((row: Row) => {
+        // проверка на пустые значения логина и пароля
         if (!row.login || (row.typeRecord !== 'LDAP' && (!row.password))) {
           allValid = false;
         }
+        // присваивание значения null при типе LDAP
         if (row.typeRecord === 'LDAP') {
           row.password = null;
         }
       });
-
+      // вызов функции сохранения и передачи состояния при положительной проверки на заполнение полей
       if (allValid) {
         saveRows();
       }
     };
-
+    // разделение строки из столбца Метка по разделителю, запись разделенного текста в массив
     const handleLabelChange = (index: number, event: Event) => {
       const value = (event.target as HTMLInputElement).value;
       if (value.trim()) {
         const labels = value.split(';').map(item => ({ text: item.trim() }));
-        if (labels.length > 0) {
+        if (labels.length > 0) { 
           store.rows[index].label = labels;
         }
       }
     };
-
+    // обратная функция записи массива в строку через разделитель
     const formatLabel = (labels: Array<{ text: string }>): string => {
       if (!Array.isArray(labels)) {
         return '';
       }
       return labels.map(item => item.text).join('; ');
     };
-
+    // сохранение состояния
     const saveRows = () => {
       store.saveToLocalStorage();
       console.log(store.rows);
@@ -85,7 +87,8 @@ export default defineComponent({
         <span>
           Учетные записи
         </span>
-        <button @click="addRow">+</button>
+        <!-- кнопка вызова функции добавления строк -->
+        <button @click="addRow">+</button> 
       </h2>
       <div style="display: flex; background-color: #cce2f89c; align-items: center; margin-right: 30px; font-family: Arial, sans-serif">
         <img src="./assets/quest.svg" alt="" width="28px" height="28px">
